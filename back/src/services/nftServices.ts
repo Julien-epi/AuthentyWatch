@@ -1,21 +1,18 @@
-import { INFT } from "../interfaces/INFT";
-import nftSchema from "../models/nft";
+import { INFT } from "../interfaces/Inft";
+import nftSchema from "../models/Nft";
 
 
 export const createNFTService = async (data: INFT) => {
-  // Vérifiez si l'investissement existe déjà
-  const investmentExist = await nftSchema.findOne({ name: data.name });
-  if (investmentExist) {
-    throw new Error("Investment with this name already exists");
+  // Vérifiez si le nft existe déjà
+  const nftExist = await nftSchema.findOne({ name: data.name });
+  if (nftExist) {
+    throw new Error("nft with this name already exists");
   }
 
   const newNFT = new nftSchema({
     ...data,
   });
-  console.log(
-    "🚀 ~ file: investmentService.ts:34 ~ addInvestmentService ~ newInvestment:",
-    newNFT
-  );
+  
 
   return newNFT.save();
 };
@@ -25,15 +22,15 @@ export const updateNFTService = async (
   data: Partial<INFT>
 ) => {
   try {
-    const investment = await nftSchema.findByIdAndUpdate(nftId, data, {
+    const nft = await nftSchema.findByIdAndUpdate(nftId, data, {
       new: true,
     });
 
-    if (!investment) {
+    if (!nft) {
       throw new Error("NFT not found");
     }
 
-    return investment;
+    return nft;
   } catch (error) {
     console.error(error);
     throw new Error("Error updating the NFT");
@@ -57,15 +54,50 @@ export const getAllNFTService = async () => {
 
 export const getNFTByIdService = async (nftId: string) => {
   try {
-    const investment = await nftSchema.findById(nftId);
+    const nft = await nftSchema.findById(nftId);
 
-    if (!investment) {
+    if (!nft) {
       throw new Error("NFT not found");
     }
 
-    return investment;
+    return nft;
   } catch (error) {
     console.error(error);
     throw new Error("Error fetching the NFT");
   }
 };
+
+export const deleteNFTService = async (nftId: string) => {
+  try {
+    const nft = await nftSchema.findByIdAndDelete(nftId);
+
+    if (!nft) {
+      throw new Error("NFT not found");
+    }
+
+    return { message: "NFT successfully deleted" };
+  } catch (error) {
+    console.error(error);
+    throw new Error("Error deleting the NFT");
+  }
+};
+
+export const getNFTWithCardIDAndNftIdService = async () => {
+  try {
+    const nft = await nftSchema.find({
+      nfc_card_id: { $exists: true, $ne: '' },
+      nft_id: { $exists: true, $ne: '' }
+    });
+
+    if (!nft || nft.length === 0) {
+      throw new Error("No NFT with specified IDs found");
+    }
+
+    return nft;
+  } catch (error) {
+    console.error(error);
+    throw new Error("Error fetching NFT with specified IDs");
+  }
+};
+
+

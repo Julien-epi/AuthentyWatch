@@ -4,6 +4,7 @@ export interface INFT {
     serial_number: string;
     watch_model: string;
     img_ipfs_link: string;
-    nfc_card: string;
+    nft_id: string;
+    nfc_card_id: string;
   }
   

@@ -35,6 +35,11 @@ contract Authentywatch is ERC721{
         ids++;
     }
 
+    function burn(uint256 _tokenId) external onlyAdmins{
+        _burn(_tokenId);
+        delete URIs[_tokenId];
+    }
+
     function updateURI(string memory _newURI, uint256 _tokenId) external onlyAdmins{
         URIs[_tokenId] = _newURI;
     }
@@ -77,13 +82,14 @@ contract Authentywatch is ERC721{
     }
 
     function removeAdmin(address _admin) external onlyAdmins{
+        require(admins.length > 1, "Cannot remove the last admin");
         for (uint256 i = 0; i < admins.length; i++) {
-        if (admins[i] == _admin) {
-            admins[i] = admins[admins.length - 1];
-            admins.pop();
-            return;
+            if (admins[i] == _admin) {
+                admins[i] = admins[admins.length - 1];
+                admins.pop();
+                return;
+            }
         }
-    }
     }
 
 }

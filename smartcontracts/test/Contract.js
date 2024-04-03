@@ -14,6 +14,7 @@ describe("Authentywatch", function () {
   const errors = {
     NOT_ADMIN: "Caller is not admin",
     OUT_OF_RANGE: "ID out of range",
+    CANT_DELETE_ADMIN: "Cannot remove the last admin",
   }
 
   before(async () => {
@@ -45,29 +46,6 @@ describe("Authentywatch", function () {
     });
   });
 
-  describe("getting tokens URIs", function () {
-    it("Should get a token URI", async function () {
-      const uri = await contract.tokenURI(1);
-
-      expect(uri).to.equal("");
-    });
-
-    it("Should not get a token URI if out of range", async function () {
-      await expect(contract.tokenURI(2)).to.be.revertedWith(errors.OUT_OF_RANGE);
-    });
-
-    it("Should get all token URIs", async function () {
-      await contract.connect(admin).mint(user.address, "");
-      const uris = await contract.getTokens(1, 2);
-
-      expect(uris).to.have.lengthOf(2);
-    });
-
-    it("Should not get all token URIs if out of range", async function () {
-      await expect(contract.getTokens(2, 3)).to.be.revertedWith(errors.OUT_OF_RANGE);
-    });
-  });
-
   describe("Managing admins", function () {
     it("Should not add an admin if not admin", async function () {
       await expect(contract.connect(user).addAdmin(user.address)).to.be.revertedWith(errors.NOT_ADMIN);
@@ -91,5 +69,39 @@ describe("Authentywatch", function () {
       await expect(contract.connect(user).removeAdmin(user.address)).to.be.revertedWith(errors.NOT_ADMIN);
     });
 
+    it("Should not remove the last admin", async function () {
+      await expect(contract.connect(admin).removeAdmin(admin.address)).to.be.revertedWith(errors.CANT_DELETE_ADMIN);
+    });
+
+    it("Should add second time an admin", async function () {
+      await contract.connect(admin).addAdmin(user.address);
+      const isAdmin = await contract.isAdmin(user.address);
+
+      expect(isAdmin).to.be.true;
+    });
+
+  });
+
+  describe("getting tokens URIs", function () {
+    it("Should get a token URI", async function () {
+      const uri = await contract.tokenURI(1);
+
+      expect(uri).to.equal("");
+    });
+
+    it("Should not get a token URI if out of range", async function () {
+      await expect(contract.tokenURI(2)).to.be.revertedWith(errors.OUT_OF_RANGE);
+    });
+
+    it("Should get all token URIs", async function () {
+      await contract.connect(admin).mint(user.address, "");
+      const uris = await contract.getTokens(1, 2);
+
+      expect(uris).to.have.lengthOf(2);
+    });
+
+    it("Should not get all token URIs if out of range", async function () {
+      await expect(contract.getTokens(2, 3)).to.be.revertedWith(errors.OUT_OF_RANGE);
+    });
   });
 });

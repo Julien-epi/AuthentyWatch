@@ -2,11 +2,16 @@
 import TransfertButton from "@/components/NFTdetails/TransfertButton";
 import { Button } from "../ui/button";
 import { Separator } from "@/components/ui/separator";
+import { Badge } from "@/components/ui/badge";
+import { useAccount } from "wagmi";
 
-const SeparatorData: React.FC<Props> = ({ brand, watch_model }) => {
+const SeparatorData: React.FC<Props> = ({ brand, watch_model, owner }) => {
   const redirectToNFT = () => {
     window.location.href = "https://www.google.com";
   };
+
+  const account = useAccount();
+
   return (
     <div className="w-1/4 mx-auto">
       <div className="space-y-1">
@@ -30,6 +35,12 @@ const SeparatorData: React.FC<Props> = ({ brand, watch_model }) => {
         <div className="text-gray-300">
           <TransfertButton />
         </div>
+        <Separator orientation="vertical" />
+        {owner == account.address && (
+          <div className="text-gray-300">
+            <Badge>Owner</Badge>
+          </div>
+        )}
       </div>
     </div>
   );

@@ -18,7 +18,7 @@ export default function Home() {
           <h1 className="text-3xl font-extrabold sm:text-5xl">
             Welcome to
 
-            <strong className="block font-extrabold text-lightBlue">
+            <strong className="block font-extrabold text-darkBlue">
               AuthentyWatch
             </strong>
           </h1>

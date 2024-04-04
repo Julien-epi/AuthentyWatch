@@ -25,7 +25,7 @@ const Footer = () => {
               <span className="mx-1">View Doc</span>
             </a>
 
-            <a href="https://sepolia.etherscan.io/" target="_blank" rel="noreferrer" className="w-full px-5 py-2 text-sm tracking-wide text-white capitalize transition-colors duration-300 transform bg-lightBlue rounded-md sm:mx-2 sm:order-2 sm:w-auto hover:bg-gray-500 focus:outline-none focus:ring focus:ring-transparent focus:ring-opacity-80">
+            <a href="https://sepolia.etherscan.io/" target="_blank" rel="noreferrer" className="w-full px-5 py-2 text-sm tracking-wide text-white capitalize transition-colors duration-300 transform bg-darkBlue rounded-md sm:mx-2 sm:order-2 sm:w-auto hover:bg-gray-500 focus:outline-none focus:ring focus:ring-transparent focus:ring-opacity-80">
               Smart Contract
             </a>
           </div>

@@ -9,33 +9,22 @@ export default function Navbar() {
   //   const { darkMode, setDarkMode } = useContext(AuthContext);
 
   return (
-    <div className="sticky flex top-0 z-10 bg-gray-200 dark:bg-gray-800 py-4">
+    <div className="fixed w-full flex justify-between items-center px-6 top-0 z-10 bg-black/20 backdrop-blur border-b border-neutral-600 py-1">
+      <div className="flex items-center space-x-6 text-black dark:text-gray-200">
         <Link href="/">
-          <Image src={logo} alt="logo-app" className="px-4 py-2 border-black dark:border-gray-200 text-black dark:text-gray-200 hover:border-gray-300 hover:text-gray-400 h-12 w-16" />
-        </Link>
-      <div className="mx-auto px-4 flex justify-center items-center space-x-6 text-black dark:text-gray-200">
-
-        <Link href="/admin">
-          <p className="px-4 py-2 border-2 border-black dark:border-gray-200 text-black dark:text-gray-200 hover:border-gray-300 hover:text-gray-400 rounded-xl">
-            Admin
-          </p>
+          <Image src={logo} alt="logo-app" className="border-black dark:border-gray-200 text-black dark:text-gray-200 hover:border-gray-300 hover:text-gray-400 w-14 object-contain" />
         </Link>
 
-        <Link href="/list">
-          <p className="px-4 py-2 border-2 border-black dark:border-gray-200 text-black dark:text-gray-200 hover:border-gray-300 hover:text-gray-400 rounded-xl">
-            NFT List
-          </p>
+        <Link href="/list" className="hover:text-lightBlue duration-200">
+          NFT List
         </Link>
-
-        <Link href="/nftDetail">
-          <p className="px-4 py-2 border-2 border-black dark:border-gray-200 text-black dark:text-gray-200 hover:border-gray-300 hover:text-gray-400 rounded-xl">
-            NFT Detail
-          </p>
+        <Link href="/admin" className="hover:text-lightBlue duration-200">
+          Admin
         </Link>
-
-        <ConnectWalletButton />
-
       </div>
+
+      <ConnectWalletButton />
+
     </div>
   );
 }

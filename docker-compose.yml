@@ -1,0 +1,26 @@
+version: '3.8'
+
+services:
+  frontend:
+    container_name: frontend_authenty_watch
+    build:
+      context: ./authentywatch
+      dockerfile: Dockerfile
+    ports:
+      - "3000:3000"
+    networks:
+      - app_network
+
+  backend:
+    container_name: backend_authenty_watch
+    build:
+      context: ./back
+      dockerfile: Dockerfile
+    ports:
+      - "3001:3001"
+    networks:
+      - app_network
+
+networks:
+  app_network:
+    driver: bridge

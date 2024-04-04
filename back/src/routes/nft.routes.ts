@@ -1,10 +1,13 @@
-import { Express } from 'express';
+import { Express } from "express";
 import {
-    createNftController,
-    updateNftController,
-    getAllNFTController,
-    getNFTByIdController
+  createNftController,
+  updateNftController,
+  getAllNFTController,
+  getNFTByIdController,
+  getNFTWithCardIDAndNftIdController,
+  deleteNftController,
 } from "../controllers/nftController";
+import authenticateToken from "../utils/authMiddleware";
 
 /**
  * @swagger
@@ -160,9 +163,65 @@ import {
  *                   type: number
  */
 
+/**
+ * @swagger
+ * /deleteNFT/{id}:
+ *   delete:
+ *     summary: Supprime un NFT par son ID
+ *     tags: [NFT]
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: L'ID du NFT à supprimer
+ *     responses:
+ *       200:
+ *         description: NFT supprimé avec succès
+ *       400:
+ *         description: Erreur lors de la suppression du NFT
+ */
+
+/**
+ * @swagger
+ * /getNFTsWithCardAndNftIds:
+ *   get:
+ *     summary: Liste tous les NFTs ayant un NFC card ID et un NFT ID
+ *     tags: [NFT]
+ *     responses:
+ *       200:
+ *         description: Une liste de NFTs ayant à la fois un NFC card ID et un NFT ID
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 type: object
+ *                 properties:
+ *                   id:
+ *                     type: string
+ *                   name:
+ *                     type: string
+ *                   serial_number:
+ *                     type: string
+ *                   watch_model:
+ *                     type: string
+ *                   img_ipfs_link:
+ *                     type: string
+ *                   nft_id:
+ *                     type: string
+ *                   nfc_card_id:
+ *                     type: string
+ */
 export const NftRoutes = (app: Express) => {
-    app.post('/createNFT', createNftController); 
-    app.get('/getAllNFT', getAllNFTController);
-    app.get('/getNFTById/:id', getNFTByIdController); 
-    app.put('/updateNFT/:id', updateNftController); 
+  app.post("/createNFT", authenticateToken, createNftController);
+  app.get("/getAllNFT", getAllNFTController);
+  app.get("/getNFTById/:id", getNFTByIdController);
+  app.put("/updateNFT/:id", authenticateToken, updateNftController);
+  app.delete("/deleteNFT/:id", authenticateToken, deleteNftController);
+  app.delete(
+    "/getNFTWithCardIDAndNftIdController",
+    getNFTWithCardIDAndNftIdController
+  );
 };

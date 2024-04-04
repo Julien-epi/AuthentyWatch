@@ -2,8 +2,9 @@
   "name": "back",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
+  "main": "dist/index.js",
   "scripts": {
+    "build": "tsc",
     "watch": "nodemon --exec ts-node server.ts",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
@@ -23,9 +24,13 @@
     "express": "^4.19.2",
     "mongoose": "^8.2.4",
     "nfc-pcsc": "^0.8.1",
-    "nodemon": "^3.1.0",
     "swagger-jsdoc": "^6.2.8",
     "swagger-ui-express": "^5.0.0",
     "ts-node": "^10.9.2"
+  },
+  "devDependencies": {
+    "typescript": "^4.0.0",
+    "nodemon": "^3.1.0",
+    "@types/node": "^20.12.2"
   }
 }

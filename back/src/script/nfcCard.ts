@@ -7,7 +7,7 @@ export const write = async (text: string) => {
 
         nfc.on('reader', async (reader: NfcCardReader) => {
             // console.log(`${reader.reader.name}  device attached`);
-            reader.on('card', async (card) => {
+            reader.once('card', async (card) => {                
                 const key: string | Buffer | number[] = "FFFFFFFFFFFF"; // key must be a 12-chars HEX string, an instance of Buffer, or array of bytes
                 const keyType = KEY_TYPE_A;
                 await reader.authenticate(1, keyType, key);
@@ -18,17 +18,20 @@ export const write = async (text: string) => {
                     // const text = "12463";
                     data.write(text);
                     await reader.write(1, data, 16); // starts writing in block 1, continues in order to write 16 bytes
+                    nfc.close();
                     console.log(`data written`);
+                    resolve(card.uid);
                 } catch (err) {
                     console.error(`error when writing data`, err);
                 }
             });
 
-            reader.on('error', (err) => {
+            reader.once('error', (err) => {
                 console.log(`${reader.reader.name}  an error occurred`, err);
+                nfc.close();
             });
 
-            reader.on('end', () => {
+            reader.once('end', () => {
                 console.log(`${reader.reader.name}  device removed`);
             });
         });
@@ -43,7 +46,7 @@ export const read = async () => {
     return await new Promise((resolve, reject) => {
         let nfc = new NFC();
 
-        nfc.on('reader', async (reader: NfcCardReader) => {
+        nfc.once('reader', async (reader: NfcCardReader) => {
             // console.log(`${reader.reader.name}  device attached`);
 
             reader.once('card', async (card) => {

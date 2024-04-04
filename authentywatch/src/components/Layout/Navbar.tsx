@@ -15,22 +15,11 @@ export default function Navbar() {
           <Image src={logo} alt="logo-app" className="border-black dark:border-gray-200 text-black dark:text-gray-200 hover:border-gray-300 hover:text-gray-400 w-14 object-contain" />
         </Link>
 
-        <Link href="/admin">
-          <p className="px-4">
-            Admin
-          </p>
+        <Link href="/list" className="hover:text-lightBlue duration-200">
+          NFT List
         </Link>
-
-        <Link href="/uploadNFT">
-          <p className="px-4 py-2 border-2 border-black dark:border-gray-200 text-black dark:text-gray-200 hover:border-gray-300 hover:text-gray-400 rounded-xl">
-          uploadNFT
-          </p>
-        </Link>
-
-        <Link href="/list">
-          <p className="px-4">
-            NFT List
-          </p>
+        <Link href="/admin" className="hover:text-lightBlue duration-200">
+          Admin
         </Link>
       </div>
 

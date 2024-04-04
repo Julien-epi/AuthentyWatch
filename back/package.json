@@ -2,10 +2,12 @@
   "name": "back",
   "version": "1.0.0",
   "description": "",
-  "main": "dist/index.js",
+  "main": "dist/server.js",
   "scripts": {
     "build": "tsc",
+    "start": "node dist/server.js",
     "watch": "nodemon --exec ts-node server.ts",
+    "dev": "tsc && nodemon dist/server.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],

@@ -18,7 +18,6 @@ export default function Navbar() {
         <Link href="/list" className="hover:text-lightBlue duration-200">
           NFT List
         </Link>
-
         <Link href="/admin" className="hover:text-lightBlue duration-200">
           Admin
         </Link>

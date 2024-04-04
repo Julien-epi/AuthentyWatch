@@ -40,7 +40,11 @@ const ProductPage: React.FC<Props> = ({ imageUrl, slug }) => {
         <h1 className="text-4xl text-center font-bold text-gray-300 pb-8">
           Watch n°{slug}
         </h1>
-        <SeparatorData brand={"Rolex"} watch_model={"Daytona"} />
+        <SeparatorData
+          brand={"Rolex"}
+          watch_model={"Daytona"}
+          owner={"0x4F472991794c32aac39533d673e0669bE70a80cf"}
+        />
         <div className="px-12 pt-12">
           <div className="grid grid-cols-3 gap-6">
             <img

@@ -6,7 +6,8 @@ import swaggerJsDoc from 'swagger-jsdoc';
 import swaggerUi from 'swagger-ui-express';
 import connectDB from './src/utils/db';
 
-import {NftRoutes} from './src/routes/nft.routes';
+import { NftRoutes } from './src/routes/nft.routes';
+import { NfcCardeRoutes } from './src/routes/nfcCard.routes';
 
 const app = express();
 dotenv.config();
@@ -34,6 +35,7 @@ app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocs));
 
 
 NftRoutes(app);
+NfcCardeRoutes(app);
 
 const PORT = 3001;
 app.listen(PORT, () => {

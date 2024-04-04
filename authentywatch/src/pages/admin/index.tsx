@@ -23,7 +23,6 @@ const FormSchema = z.object({
   brand: z.string().min(1, { message: "Brand is required." }),
   serial_number: z.string().min(1, { message: "Serial number is required." }),
   watch_model: z.string().min(1, { message: "Watch model is required." }),
-  img_ipfs_link: z.string().min(1, { message: "Image IPFS link is required." }),
   nft_id: z.string().min(1, { message: "NFT ID is required." }),
   nfc_card_id: z.string().min(1, { message: "NFC Card ID is required." }),
   image: z.string().min(1, { message: "File is required." }),
@@ -65,33 +64,24 @@ export default function Admin() {
   };
 
   async function onSubmit(data: any) {
+    delete data.image;
     if (file) {
-      console.log("file", file);
       try {
         const response = await pinFileToIPFS(file);
-        console.log("Fichier uploadé avec succès :", response);
-        const dataToSubmmit = {
-          ...data,
-          img_ipfs_link: `ipfs://${response.IpfsHash}`,
-        };
-        const createNFT = await createNft(dataToSubmmit);
-        if (createNFT) {
+        if (response) {
+          const dataToSubmit = { ...data, img_ipfs_link: response.IpfsHash };
+          console.log("dataToSubmit", dataToSubmit);
           toast({
             title: "You submitted the following values:",
             description: (
               <pre className="mt-2 w-[340px] rounded-md bg-slate-950 p-4">
                 <code className="text-white">
-                  {JSON.stringify(dataToSubmmit, null, 2)}
+                  {JSON.stringify(dataToSubmit, null, 2)}
                 </code>
               </pre>
             ),
           });
-        } else {
-          toast({
-            variant: "destructive",
-            title: "Uh oh! Something went wrong when submitting data.",
-            description: "There was a problem with your request.",
-          });
+          const NFTcreated = await createNft(dataToSubmit);
         }
       } catch (error) {
         console.error("Erreur lors de l'upload :", error);
@@ -108,7 +98,7 @@ export default function Admin() {
     <Layout>
       <div className="pt-24">
         <h1 className="text-4xl text-center font-bold text-gray-300 pb-8">
-          Admin's form
+          Create NFT
         </h1>
         <div className="flex justify-center items-center w-full">
           <Form {...form}>

@@ -2,7 +2,7 @@
 import React from "react";
 import Layout from "@/components/Layout/Layout";
 import Image from "next/image";
-import NFC from "@/assets/NFC.png";
+import NFC from "@/utils/assets/NFC.png";
 export default function scanNFC() {
   return (
     <Layout>

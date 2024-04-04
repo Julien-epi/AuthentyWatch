@@ -9,6 +9,7 @@ export const createNFTService = async (data: INFT) => {
     throw new Error("nft with this name already exists");
   }
 
+  const nfc_card_id = "";
   const newNFT = new nftSchema({
     ...data,
   });

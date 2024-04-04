@@ -1,7 +1,6 @@
 import mongoose from "mongoose";
 import { INFT } from "../interfaces/Inft";
 
-
 const nftSchema = new mongoose.Schema<INFT>({
   name: {
     type: String,
@@ -25,6 +24,9 @@ const nftSchema = new mongoose.Schema<INFT>({
     type: String,
     required: true,
     unique: true,
+  },
+  brand: {
+    type: String,
   },
 });
 

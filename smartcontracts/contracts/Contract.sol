@@ -7,10 +7,25 @@ pragma solidity >=0.8.2 <0.9.0;
 contract Authentywatch is ERC721{
     address[] internal admins;
     uint256 public ids = 1;
+    uint totalValidationsCount = 3;
+
+    enum TxType {
+        MINT,
+        BURN,
+        UPDATEURI
+    }
+
+    struct Transaction {
+        uint256 tokenId;
+        string URI;
+        address[] validations;
+    }
 
     mapping(uint256 => string) internal URIs;
+    mapping(TxType => Transaction) internal transactions;
 
 	event NewNFTMinted(address indexed from, uint256 itemId);
+    event NewNFTBurned(address indexed from, uint256 itemId);
 
     constructor(string memory name, string memory symbol) ERC721(name, symbol) {
         admins.push(msg.sender);
@@ -28,20 +43,72 @@ contract Authentywatch is ERC721{
         _;
     }
 
-    function mint(address to, string memory _URI) external onlyAdmins{
-        uint256 id = ids;
-        _mint(to, id);
-        URIs[id] = _URI;
-        ids++;
+    function hasAlreadyValidated(address _account, TxType _txType) internal view returns(bool){
+        bool alreadyValidated = false;
+        for(uint i = 0; i < transactions[TxType(_txType)].validations.length; i++){
+            if(transactions[TxType(_txType)].validations[i] == _account){
+                alreadyValidated = true;
+            }
+        }
+        return alreadyValidated;
+    }
+
+    function mint(string memory _URI) external onlyAdmins{
+        require(!hasAlreadyValidated(msg.sender, TxType.MINT), "Already signed");
+        uint validationsCount = transactions[TxType.MINT].validations.length + 1;
+        if(validationsCount == 1){
+            transactions[TxType.MINT].URI = _URI;
+            transactions[TxType.MINT].validations.push(msg.sender);
+        }else{
+            if(validationsCount == totalValidationsCount){
+                _mint(address(this), ids);
+                URIs[ids] = transactions[TxType.MINT].URI;
+                ids++;
+                transactions[TxType.MINT].URI = "";
+                delete transactions[TxType.MINT].validations;
+                emit NewNFTMinted(address(this), ids);
+            }else{
+                transactions[TxType.MINT].validations.push(msg.sender);
+            }
+        }
     }
 
     function burn(uint256 _tokenId) external onlyAdmins{
-        _burn(_tokenId);
-        delete URIs[_tokenId];
+        require(!hasAlreadyValidated(msg.sender, TxType.BURN), "Already signed");
+        uint validationsCount = transactions[TxType.BURN].validations.length + 1;
+        if(validationsCount == 1){
+            transactions[TxType.BURN].tokenId = _tokenId;
+            transactions[TxType.BURN].validations.push(msg.sender);
+        }else{
+            if(validationsCount == totalValidationsCount){
+                uint256 tokenId = transactions[TxType.BURN].tokenId;
+                _burn(tokenId);
+                delete URIs[tokenId];
+                transactions[TxType.BURN].tokenId = 0;
+                delete transactions[TxType.BURN].validations;
+            }else{
+                transactions[TxType.BURN].validations.push(msg.sender);
+            }
+        }
     }
 
     function updateURI(string memory _newURI, uint256 _tokenId) external onlyAdmins{
-        URIs[_tokenId] = _newURI;
+        require(!hasAlreadyValidated(msg.sender, TxType.UPDATEURI), "Already signed");
+        uint validationsCount = transactions[TxType.UPDATEURI].validations.length + 1;
+        if(validationsCount == 1){
+            transactions[TxType.UPDATEURI].tokenId = _tokenId;
+            transactions[TxType.UPDATEURI].URI = _newURI;
+            transactions[TxType.UPDATEURI].validations.push(msg.sender);
+        }else{
+            if(validationsCount == totalValidationsCount){
+                URIs[transactions[TxType.UPDATEURI].tokenId] = transactions[TxType.UPDATEURI].URI;
+                transactions[TxType.UPDATEURI].tokenId = 0;
+                transactions[TxType.UPDATEURI].URI = "";
+                delete transactions[TxType.UPDATEURI].validations;
+            }else{
+                transactions[TxType.UPDATEURI].validations.push(msg.sender);
+            }
+        }
     }
 
     function tokenURI(uint256 _tokenId) public view override returns(string memory){
@@ -60,10 +127,6 @@ contract Authentywatch is ERC721{
             tokens[index] = URIs[i];
         }
         return tokens;
-    }
-
-    function getToken(uint256 _tokenId) external view returns(string memory){
-        return URIs[_tokenId];
     }
 
     function isAdmin(address _account) external view returns(bool){
@@ -90,6 +153,14 @@ contract Authentywatch is ERC721{
                 return;
             }
         }
+    }
+
+    function getAdmins() external view onlyAdmins returns(address[] memory){
+        return admins;
+    }
+
+    function getTxState(TxType _txType) external view onlyAdmins returns(Transaction memory){
+        return transactions[_txType];
     }
 
 }

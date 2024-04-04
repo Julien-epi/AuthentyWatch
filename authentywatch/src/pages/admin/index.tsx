@@ -23,7 +23,7 @@ const FormSchema = z.object({
   brand: z.string().min(1, { message: "Brand is required." }),
   serial_number: z.string().min(1, { message: "Serial number is required." }),
   watch_model: z.string().min(1, { message: "Watch model is required." }),
-  nft_id: z.string().min(1, { message: "NFT ID is required." }),
+  // nft_id: z.string().min(1, { message: "NFT ID is required." }),
   nfc_card_id: z.string().min(1, { message: "NFC Card ID is required." }),
   image: z.string().min(1, { message: "File is required." }),
 });
@@ -33,13 +33,14 @@ const inputValues = [
   { name: "brand", type: "text" },
   { name: "serial_number", type: "text" },
   { name: "watch_model", type: "text" },
-  { name: "nft_id", type: "text" },
+  // { name: "nft_id", type: "text" },
   { name: "nfc_card_id", type: "text" },
   { name: "image", type: "file" },
 ];
 
 export default function Admin() {
   const [file, setFile] = useState<File | null>(null);
+  const [isLoading, setIsLoading] = useState(false);
 
   const form = useForm({
     resolver: zodResolver(FormSchema),
@@ -51,7 +52,7 @@ export default function Admin() {
   const { register, handleSubmit, setValue, watch } = form;
 
   useEffect(() => {
-    register("image");
+    register("image" as never);
   }, [register]);
 
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -59,17 +60,19 @@ export default function Admin() {
     if (fileList && fileList.length > 0) {
       const selectedFile = fileList[0];
       setFile(selectedFile);
-      setValue("image", selectedFile.name);
+      setValue("image" as never, selectedFile.name as never);
     }
   };
 
   async function onSubmit(data: any) {
     delete data.image;
     if (file) {
+      setIsLoading(true);
       try {
         const response = await pinFileToIPFS(file);
         if (response) {
-          const dataToSubmit = { ...data, img_ipfs_link: response.IpfsHash };
+          const token_id = "1";
+          const dataToSubmit = { ...data, img_ipfs_link: `https://ipfs.io/ipfs/${response.IpfsHash}` };
           console.log("dataToSubmit", dataToSubmit);
           toast({
             title: "You submitted the following values:",
@@ -91,6 +94,7 @@ export default function Admin() {
           description: "There was a problem with your request.",
         });
       }
+      setIsLoading(false);
     }
   }
 
@@ -154,8 +158,13 @@ export default function Admin() {
               </div>
               <div className="text-center">
                 <Button type="submit" className="mt-12">
-                  Submit
+                  {isLoading ? "Loading..." : "Submit"}
                 </Button>
+                {isLoading && (
+                  <p className="text-sm text-gray-500 mt-2">
+                    Please connect the NFC card to the device.
+                  </p>
+                )}
               </div>
             </form>
           </Form>

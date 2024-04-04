@@ -3,7 +3,11 @@ import { API_URL } from "@/utils/url";
 import { Inft } from "@/interfaces/Inft";
 
 export function createNft(data: Inft) {
-  return axios.post<Inft>(`${API_URL}/createNFT`, data);
+  return axios.post<Inft>(`${API_URL}/createNFT`, data, {
+    headers: {
+      authorization: `Bearer ${process.env.NEXT_PUBLIC_AUTH_TOKEN}`,
+    },
+  });
 }
 
 function update(id: string, data: Inft) {

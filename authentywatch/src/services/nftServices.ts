@@ -1,12 +1,13 @@
 import axios from "axios";
 import { API_URL } from "@/utils/url";
-import { Inft } from "@/interfaces/Inft";
+import { INFT } from "@/interfaces/Inft";
 
-function createNft(data: Inft) {
-  return axios.post<Inft>(`${API_URL}/register`, data);
+
+function createNft(data: INFT) {
+  return axios.post<INFT>(`${API_URL}/createNFT`, data);
 }
 
-function update(id: string, data: Inft) {
+function update(id: string, data: INFT) {
   return axios.put(`${API_URL}/update/${id}`, data);
 }
 

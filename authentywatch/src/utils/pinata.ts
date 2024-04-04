@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 const pinFileToIPFS = async (file: Blob) => {
-  const url = process.env.NEXT_PUBLIC_PINATA_API_URL as string;
+  const url = process.env.NEXT_PUBLIC_PINATA_URL as string;
 
   const formData = new FormData();
   formData.append('file', file);

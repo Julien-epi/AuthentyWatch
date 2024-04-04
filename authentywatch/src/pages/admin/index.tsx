@@ -16,6 +16,7 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { pinFileToIPFS } from "@/utils/pinata";
+import { createNft } from "@/services/nftServices";
 
 const FormSchema = z.object({
   name: z.string().min(1, { message: "Name is required." }),
@@ -33,7 +34,6 @@ const inputValues = [
   { name: "brand", type: "text" },
   { name: "serial_number", type: "text" },
   { name: "watch_model", type: "text" },
-  { name: "img_ipfs_link", type: "text" },
   { name: "nft_id", type: "text" },
   { name: "nfc_card_id", type: "text" },
   { name: "image", type: "file" },
@@ -70,17 +70,29 @@ export default function Admin() {
       try {
         const response = await pinFileToIPFS(file);
         console.log("Fichier uploadé avec succès :", response);
-        alert(`Fichier uploadé avec succès ! Hash IPFS : ${response.IpfsHash}`);
-        toast({
-          title: "You submitted the following values:",
-          description: (
-            <pre className="mt-2 w-[340px] rounded-md bg-slate-950 p-4">
-              <code className="text-white">
-                {JSON.stringify(data, null, 2)}
-              </code>
-            </pre>
-          ),
-        });
+        const dataToSubmmit = {
+          ...data,
+          img_ipfs_link: `ipfs://${response.IpfsHash}`,
+        };
+        const createNFT = await createNft(dataToSubmmit);
+        if (createNFT) {
+          toast({
+            title: "You submitted the following values:",
+            description: (
+              <pre className="mt-2 w-[340px] rounded-md bg-slate-950 p-4">
+                <code className="text-white">
+                  {JSON.stringify(dataToSubmmit, null, 2)}
+                </code>
+              </pre>
+            ),
+          });
+        } else {
+          toast({
+            variant: "destructive",
+            title: "Uh oh! Something went wrong when submitting data.",
+            description: "There was a problem with your request.",
+          });
+        }
       } catch (error) {
         console.error("Erreur lors de l'upload :", error);
         toast({

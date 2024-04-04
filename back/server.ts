@@ -1,4 +1,5 @@
 import dotenv from 'dotenv';
+dotenv.config();
 import express from 'express';
 import bodyParser from 'body-parser';
 import cors from 'cors';
@@ -9,7 +10,6 @@ import connectDB from './src/utils/db';
 import {NftRoutes} from './src/routes/nft.routes';
 
 const app = express();
-dotenv.config();
 
 connectDB();
 

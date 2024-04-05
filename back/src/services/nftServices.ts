@@ -53,7 +53,9 @@ export const getAllNFTService = async () => {
 
 export const getNFTByIdService = async (nftId: string) => {
   try {
-    const nft = await nftSchema.findById(nftId);
+    const nft = await nftSchema.findOne({
+      nft_id: nftId,
+    })
 
     if (!nft) {
       throw new Error("NFT not found");

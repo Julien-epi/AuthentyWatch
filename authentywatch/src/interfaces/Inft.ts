@@ -1,6 +1,6 @@
 
-export interface Inft {
-  id: string;
+export interface INFT {
+  _id: string;
   name: string;
   brand: string;
   serial_number: string;

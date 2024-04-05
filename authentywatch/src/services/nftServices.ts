@@ -11,7 +11,7 @@ function update(id: string, data: INFT) {
 }
 
 function deleteNFT(id: string) {
-  return axios.delete(`${API_URL}/delete/${id}`);
+  return axios.delete(`${API_URL}/deleteNFT/${id}`);
 }
 
 function getAllNft() {

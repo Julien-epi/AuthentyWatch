@@ -70,7 +70,6 @@ export default function Admin() {
         const response = await pinFileToIPFS(file);
         if (response) {
           const dataToSubmit = { ...data, img_ipfs_link: response.IpfsHash };
-          console.log("dataToSubmit", dataToSubmit);
           toast({
             title: "You submitted the following values:",
             description: (

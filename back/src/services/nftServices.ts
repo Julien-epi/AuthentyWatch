@@ -12,7 +12,6 @@ export const createNFTService = async (data: INFT) => {
   const newNFT = new nftSchema({
     ...data,
   });
-  
 
   return newNFT.save();
 };

@@ -1,5 +1,5 @@
 "use client";
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, use } from "react";
 import Layout from "@/components/Layout/Layout";
 import {
   Form,
@@ -20,8 +20,11 @@ import { NFTService } from "@/services/nftServices";
 import { useLastTokenId } from "@/hooks/useLastTokenId";
 import { NfcCardService } from "@/services/nfcCardService";
 import abi from '@/utils/abi.json';
-import { useWriteContract, useWaitForTransactionReceipt } from "wagmi";
+import { useWriteContract, useWaitForTransactionReceipt, useAccount } from "wagmi";
 import { address } from "@/utils/address";
+import { useTxState } from "@/hooks/useTxState";
+import { useAdminStatus } from "@/hooks/useAdminStatus";
+
 
 const FormSchema = z.object({
   name: z.string().min(1, { message: "Name is required." }),
@@ -48,12 +51,16 @@ const Admin = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [loadingMsg, setLoadingMsg] = useState("");
 
+  const isAdmin = useAdminStatus();
+  const account = useAccount();
   const token_id = useLastTokenId();
   const {
     data: hash,
     isPending,
+    isSuccess,
     writeContract
   } = useWriteContract()
+  const stateData = useTxState(0);
 
   const form = useForm({
     resolver: zodResolver(FormSchema),
@@ -67,6 +74,12 @@ const Admin = () => {
   useEffect(() => {
     register("image" as never);
   }, [register]);
+
+  useEffect(() => {
+    if (stateData && stateData.validations.length > 0) {
+
+    }
+  }, [stateData]);
 
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const fileList = event.target.files;
@@ -153,76 +166,96 @@ const Admin = () => {
 
   return (
     <Layout>
-      <div className="pt-24">
-        <h1 className="text-4xl text-center font-bold text-gray-300 pb-8">
-          Create NFT
-        </h1>
-        <div className="flex justify-center items-center w-full">
-          <Form {...form}>
-            <form
-              onSubmit={form.handleSubmit(onSubmit)}
-              className="w-full max-w-4xl"
-            >
-              <div className="grid md:grid-cols-2 gap-6 -mx-3">
-                <div className="w-full px-3 mb-6 md:mb-0 space-y-8">
-                  {inputValues.slice(0, 4).map(({ name, type }) => (
-                    <FormField
-                      key={name}
-                      control={form.control}
-                      name={name}
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel className="font-bold text-gray-500">
-                            {name.charAt(0).toUpperCase() + name.slice(1)}
-                          </FormLabel>
-                          <FormControl>
-                            <Input type={type} {...field} />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-                  ))}
-                </div>
-                <div className="w-full px-3 mb-6 md:mb-0 space-y-8">
-                  {inputValues.slice(4).map(({ name, type }) => (
-                    <FormField
-                      key={name}
-                      control={form.control}
-                      name={name}
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel className="font-bold text-gray-500">
-                            {name.charAt(0).toUpperCase() + name.slice(1)}
-                          </FormLabel>
-                          <FormControl>
-                            {type === "file" ? (
-                              <Input type="file" onChange={handleFileChange} />
-                            ) : (
-                              <Input type={type} {...field} />
+      {isAdmin && (
+        !stateData ?
+          <div className="flex flex-col h-screen justify-center items-center">
+            <p className="text-white">Loading...</p>
+          </div>
+          :
+          stateData && stateData.validations.length > 0 ?
+            <div className="pt-20 w-full text-center flex flex-col justify-center items-center h-[80vh]">
+              <h1 className="text-4xl text-center font-bold text-gray-300 pb-8">
+                A mint is pending
+              </h1>
+              <button disabled={isSuccess} onClick={() => mintNft("")} className="px-5 py-2 text-sm tracking-wide text-white capitalize transition-colors duration-300 transform bg-darkBlue rounded-md hover:bg-gray-500 focus:outline-none focus:ring focus:ring-transparent focus:ring-opacity-80">
+                {stateData.validations.includes(account.address as string) ?
+                  "Please wait for other admins" :
+                  isSuccess ? "Loading..." : "Signed to validate mint"
+                }
+              </button>
+            </div>
+            :
+            <div className="pt-24">
+              <h1 className="text-4xl text-center font-bold text-gray-300 pb-8">
+                Create NFT
+              </h1>
+              <div className="flex justify-center items-center w-full">
+                <Form {...form}>
+                  <form
+                    onSubmit={form.handleSubmit(onSubmit)}
+                    className="w-full max-w-4xl"
+                  >
+                    <div className="grid md:grid-cols-2 gap-6 -mx-3">
+                      <div className="w-full px-3 mb-6 md:mb-0 space-y-8">
+                        {inputValues.slice(0, 3).map(({ name, type }) => (
+                          <FormField
+                            key={name}
+                            control={form.control}
+                            name={name}
+                            render={({ field }) => (
+                              <FormItem>
+                                <FormLabel className="font-bold text-gray-500">
+                                  {name.charAt(0).toUpperCase() + name.slice(1)}
+                                </FormLabel>
+                                <FormControl>
+                                  <Input type={type} {...field} />
+                                </FormControl>
+                                <FormMessage />
+                              </FormItem>
                             )}
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
+                          />
+                        ))}
+                      </div>
+                      <div className="w-full px-3 mb-6 md:mb-0 space-y-8">
+                        {inputValues.slice(3).map(({ name, type }) => (
+                          <FormField
+                            key={name}
+                            control={form.control}
+                            name={name}
+                            render={({ field }) => (
+                              <FormItem>
+                                <FormLabel className="font-bold text-gray-500">
+                                  {name.charAt(0).toUpperCase() + name.slice(1)}
+                                </FormLabel>
+                                <FormControl>
+                                  {type === "file" ? (
+                                    <Input type="file" onChange={handleFileChange} />
+                                  ) : (
+                                    <Input type={type} {...field} />
+                                  )}
+                                </FormControl>
+                                <FormMessage />
+                              </FormItem>
+                            )}
+                          />
+                        ))}
+                      </div>
+                    </div>
+                    <div className="text-center">
+                      <Button type="submit" className="mt-12" disabled={isLoading || isSuccess}>
+                        {isLoading ? "Loading..." : !isSuccess ? "Submit" : "NFT minted !"}
+                      </Button>
+                      {isLoading && (
+                        <p className="text-sm text-gray-500 mt-2">
+                          {loadingMsg}
+                        </p>
                       )}
-                    />
-                  ))}
-                </div>
+                    </div>
+                  </form>
+                </Form>
               </div>
-              <div className="text-center">
-                <Button type="submit" className="mt-12" disabled={isLoading}>
-                  {isLoading ? "Loading..." : "Submit"}
-                </Button>
-                {isLoading && (
-                  <p className="text-sm text-gray-500 mt-2">
-                    {loadingMsg}
-                  </p>
-                )}
-              </div>
-            </form>
-          </Form>
-        </div>
-      </div>
+            </div>
+      )}
     </Layout>
   );
 }

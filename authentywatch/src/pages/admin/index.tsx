@@ -121,14 +121,12 @@ const Admin = () => {
         setLoadingMsg("Generating NFT metadata...");
         const response = await pinFileToIPFS(file);
         if (response) {
-
           const dataToSubmit = {
             ...data,
             nft_id: token_id.toString(),
             nfc_card_id: nfc_card_id,
             img_ipfs_link: `https://ipfs.io/ipfs/${response.IpfsHash}`
           };
-          console.log("dataToSubmit", dataToSubmit);
           toast({
             title: "You submitted the following values:",
             description: (

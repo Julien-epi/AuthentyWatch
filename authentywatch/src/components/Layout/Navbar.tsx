@@ -24,6 +24,11 @@ export default function Navbar() {
           Scan
         </Link>
         {isAdmin && (
+          <Link href="/adminList" className="hover:text-lightBlue duration-200">
+            AdminList
+          </Link>
+        )}
+        {isAdmin && (
           <Link href="/admin" className="hover:text-lightBlue duration-200">
             Admin
           </Link>

@@ -8,7 +8,7 @@ export function useAdminStatus() {
   const [isAdmin, setIsAdmin] = useState<boolean | null>(null);
   const { address } = useAccount();
 
-  const { data: isAdminData, isError, isLoading } = useReadContract({
+  const { data: isAdminData, isError, isLoading, isSuccess } = useReadContract({
     abi,
     address: contractAddress,
     functionName: 'isAdmin',
@@ -16,7 +16,6 @@ export function useAdminStatus() {
   });
 
   useEffect(() => {
-
     if (!isLoading && !isError && address) {
       if (typeof isAdminData === 'boolean') {
         setIsAdmin(isAdminData);

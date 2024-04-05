@@ -15,7 +15,6 @@ const UploadForm: React.FC = () => {
         if (file) {
             try {
                 const response = await pinFileToIPFS(file);
-                console.log('Fichier uploadé avec succès :', response);
                 alert(`Fichier uploadé avec succès ! Hash IPFS : ${response.IpfsHash}`);
             } catch (error) {
                 console.error('Erreur lors de l\'upload :', error);

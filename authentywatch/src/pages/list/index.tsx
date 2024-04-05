@@ -29,6 +29,7 @@ const List = () => {
   return (
     <Layout>
       <div className="pt-24 px-36">
+      
         <h1 className="text-4xl text-center font-bold text-gray-300 pb-8">List of watches</h1>
         <div className="grid md:grid-cols-4 md:gap-2">
           {nfts.map((nft, index) => (
@@ -37,6 +38,7 @@ const List = () => {
               id={nft._id}
               name={nft.name}
               brand={nft.brand}
+              nftId={nft.nft_id}
               image={nft.img_ipfs_link}
               onCardDelete={handleCardDelete}
             />

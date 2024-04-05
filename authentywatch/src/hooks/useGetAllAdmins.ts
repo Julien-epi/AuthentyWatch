@@ -10,7 +10,7 @@ export function useGetAllAdmins() {
   const [error, setError] = useState('');
   const { address } = useAccount();
 
-  const { data, isError, isLoading, error: readError } = useReadContract({
+  const { data, isError, isLoading, error: readError, isSuccess } = useReadContract({
     address: contractAddress,
     abi: abi,
     functionName: 'getAdmins',
@@ -26,5 +26,5 @@ export function useGetAllAdmins() {
     }
   }, [data, isError, readError]);
 
-  return { admins, isLoading, isError, error };
+  return { admins, isLoading, isError, error, isSuccess };
 }

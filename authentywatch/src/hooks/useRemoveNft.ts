@@ -2,17 +2,17 @@ import { useWriteContract } from 'wagmi';
 import abi from '@/utils/abi.json';
 import {address} from '@/utils/address';
 
-export const useRemoveAdmin = () => {
+export const useRemoveNFT = () => {
   const { writeContract, isError, error, isPending, isSuccess } = useWriteContract();
 
-  async function removeAdmin(addressAdmin: string) {
+  async function removeNFT(nftId: string) {
     writeContract({
       abi,
       address: address,
-      functionName: 'removeAdmin',
-      args: [addressAdmin],
+      functionName: 'burn',
+      args: [nftId],
     });
   }
 
-  return { removeAdmin, isError, error, isPending, isSuccess };
+  return { removeNFT, isError, error, isPending, isSuccess };
 };

@@ -25,6 +25,9 @@ export default function Navbar() {
         <Link href="/admin" className="hover:text-lightBlue duration-200">
           Admin
         </Link>
+        <Link href="/adminList" className="hover:text-lightBlue duration-200">
+          AdminList
+        </Link>
       </div>
 
       <ConnectWalletButton />

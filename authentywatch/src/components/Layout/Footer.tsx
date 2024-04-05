@@ -2,8 +2,10 @@
 import logo from "@/utils/assets/logo.png";
 import Image from "next/image";
 import Link from "next/link";
+import { address } from "@/utils/address";
 
 const Footer = () => {
+  const url = "https://sepolia.etherscan.io/address/" + address;
   return (
     <footer className="bg-black">
       <div className="container px-6 py-8 mx-auto">
@@ -40,7 +42,7 @@ const Footer = () => {
             </a>
 
             <a
-              href="https://sepolia.etherscan.io/address/0x400a5f8d3636a697973f5be14b222de8aa3074d7"
+              href={url}
               target="_blank"
               rel="noreferrer"
               className="w-full px-5 py-2 text-sm tracking-wide text-white capitalize transition-colors duration-300 transform bg-darkBlue rounded-md sm:mx-2 sm:order-2 sm:w-auto hover:bg-gray-500 focus:outline-none focus:ring focus:ring-transparent focus:ring-opacity-80"

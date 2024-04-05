@@ -1,5 +1,6 @@
 import { Express } from 'express';
 import { readNfcCard, writeNfcCard } from '../controllers/nfcCardController';
+import authenticateToken from '../utils/authMiddleware';
 
 /**
  * @swagger
@@ -53,5 +54,5 @@ import { readNfcCard, writeNfcCard } from '../controllers/nfcCardController';
 
 export const NfcCardeRoutes = (app: Express) => {
     app.get('/readNfcCard', readNfcCard);
-    app.post('/writeNfcCard', writeNfcCard);
+    app.post('/writeNfcCard', authenticateToken, writeNfcCard);
 };

@@ -33,7 +33,6 @@ const nftSchema = new mongoose.Schema<INFT>({
   brand: {
     type: String,
     required: true,
-    unique: true,
   },
 });
 

@@ -8,11 +8,10 @@ export const createNFTService = async (data: INFT) => {
   if (nftExist) {
     throw new Error("nft with this name already exists");
   }
-
+  
   const newNFT = new nftSchema({
     ...data,
   });
-  
 
   return newNFT.save();
 };

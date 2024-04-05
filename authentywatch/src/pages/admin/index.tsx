@@ -51,7 +51,7 @@ export default function Admin() {
   const { register, handleSubmit, setValue, watch } = form;
 
   useEffect(() => {
-    register("image");
+    register("image"); 
   }, [register]);
 
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {

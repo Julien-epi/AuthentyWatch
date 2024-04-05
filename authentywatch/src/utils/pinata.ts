@@ -11,14 +11,6 @@ const pinFileToIPFS = async (file: Blob) => {
     pinata_secret_api_key: process.env.NEXT_PUBLIC_PINATA_API_SECRET!,
     "Content-Type": "multipart/form-data",
   };
-  console.log(
-    "🚀 ~ pinFileToIPFS ~ NEXT_PUBLIC_PINATA_API_SECRET:",
-    process.env.NEXT_PUBLIC_PINATA_API_SECRET
-  );
-  console.log(
-    "🚀 ~ pinFileToIPFS ~ NEXT_PUBLIC_PINATA_API_KEY:",
-    process.env.NEXT_PUBLIC_PINATA_API_KEY
-  );
 
   try {
     const response = await axios.post(url, formData, { headers });
@@ -29,4 +21,19 @@ const pinFileToIPFS = async (file: Blob) => {
   }
 };
 
-export { pinFileToIPFS };
+async function pinJSONToIPFS(name: string, data: string) {
+  try {
+    const response = await axios.post("https://api.pinata.cloud/pinning/pinJSONToIPFS", data, {
+      headers: {
+        "Content-Type": "application/json",
+        pinata_api_key: process.env.NEXT_PUBLIC_PINATA_API_KEY,
+        pinata_secret_api_key: process.env.NEXT_PUBLIC_PINATA_API_SECRET,
+      },
+    });
+    return response.data;
+  } catch (error) {
+    console.log("Error pinning JSON data to IPFS: ", error);
+  }
+}
+
+export { pinFileToIPFS, pinJSONToIPFS };

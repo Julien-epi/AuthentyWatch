@@ -15,10 +15,13 @@ import { toast } from "@/components/ui/use-toast";
 import { set, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-import { pinFileToIPFS } from "@/utils/pinata";
+import { pinFileToIPFS, pinJSONToIPFS } from "@/utils/pinata";
 import { NFTService } from "@/services/nftServices";
 import { useLastTokenId } from "@/hooks/useLastTokenId";
 import { NfcCardService } from "@/services/nfcCardService";
+import abi from '@/utils/abi.json';
+import { useWriteContract } from "wagmi";
+import { address } from "@/utils/address";
 
 const FormSchema = z.object({
   name: z.string().min(1, { message: "Name is required." }),
@@ -44,7 +47,9 @@ const Admin = () => {
   const [file, setFile] = useState<File | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [loadingMsg, setLoadingMsg] = useState("");
+
   const token_id = useLastTokenId();
+  const { writeContract } = useWriteContract();
 
   const form = useForm({
     resolver: zodResolver(FormSchema),
@@ -107,6 +112,16 @@ const Admin = () => {
                 </code>
               </pre>
             ),
+          });
+          const jsonFileResponse = await pinJSONToIPFS("metada", JSON.stringify(dataToSubmit));
+          console.log(jsonFileResponse.IpfsHash);
+
+          setLoadingMsg("Minting NFT...");
+          writeContract({
+            abi,
+            address: address,
+            functionName: 'mint',
+            args: [jsonFileResponse.IpfsHash],
           });
           await NFTService.createNft(dataToSubmit);
           toast({

@@ -9,10 +9,11 @@ import {
 } from "../services/nftServices";
 
 export const createNftController = async (req: Request, res: Response) => {
-  try {
+  try {    
     const nft = await createNFTService(req.body);
     res.status(201).send(nft);
   } catch (error) {
+    console.error(error);
     res.status(400).send({ error: (error as Error).message });
 }
 };

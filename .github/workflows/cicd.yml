@@ -1,0 +1,44 @@
+name: CI with Docker for Next.js Frontend
+
+on:
+  push:
+    branches:
+      - cicd_test_dev
+  pull_request:
+    branches:
+      - cicd_test_dev
+
+jobs:
+  docker-build-and-test:
+    runs-on: ubuntu-latest
+    
+    services:
+      docker:
+        image: docker:19.03.12
+        options: --privileged
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+      
+    - name: Set up Docker Buildx
+      uses: docker/setup-buildx-action@v1
+      
+    - name: Cache Docker layers
+      uses: actions/cache@v2
+      with:
+        path: /tmp/.buildx-cache
+        key: ${{ runner.os }}-buildx-${{ github.sha }}
+        restore-keys: |
+          ${{ runner.os }}-buildx-
+    
+    - name: Build Docker images
+      run: docker-compose build
+      
+    - name: Run Docker containers
+      run: docker-compose up -d
+      
+    # Ici, vous pouvez ajouter des étapes pour exécuter des tests contre vos conteneurs en cours d'exécution si nécessaire
+    
+    - name: Shutdown Docker containers
+      run: docker-compose down

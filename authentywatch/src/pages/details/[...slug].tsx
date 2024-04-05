@@ -1,7 +1,21 @@
-import { GetServerSideProps } from "next";
+import React, { useEffect, useState } from "react";
+import dynamic from "next/dynamic";
 import Layout from "@/components/Layout/Layout";
-import TableDetails from "@/components/NFTdetails/TableDetails";
-import SeparatorData from "@/components/NFTdetails/SeparatorData";
+import { GetServerSideProps } from "next";
+import { getNFTById } from "@/services/nftServices";
+
+const SeparatorData = dynamic(
+  () => import("@/components/NFTdetails/SeparatorData"),
+  {
+    ssr: false,
+  }
+);
+const TableDetails = dynamic(
+  () => import("@/components/NFTdetails/TableDetails"),
+  {
+    ssr: false,
+  }
+);
 
 export const getServerSideProps: GetServerSideProps = async ({ params }) => {
   const { slug } = params;
@@ -14,6 +28,7 @@ export const getServerSideProps: GetServerSideProps = async ({ params }) => {
 
 interface Props {
   imageUrl: string;
+  slug?: string | string[];
 }
 
 const txHistoric = [
@@ -33,36 +48,45 @@ const txHistoric = [
     date: "04/04/2024",
   },
 ];
-const ProductPage: React.FC<Props> = ({ imageUrl, slug }) => {
-  return (
-    <Layout>
-      <div className="pt-24">
-        <h1 className="text-4xl text-center font-bold text-gray-300 pb-8">
-          Watch n°{slug}
-        </h1>
-        <SeparatorData
-          brand={"Rolex"}
-          watch_model={"Daytona"}
-          owner={"0x4F472991794c32aac39533d673e0669bE70a80cf"}
-        />
-        <div className="px-12 pt-12">
-          <div className="grid grid-cols-3 gap-6">
-            <img
-              src={imageUrl}
-              alt="Dynamic Image"
-              width={400}
-              height={400}
-              className="rounded-2xl col-span-1"
-            />
-            <div className="col-span-2 text-left text-gray-300">
-              <TableDetails txHistoric={txHistoric} />
+
+const ProductPage: React.FC<Props> = async ({ imageUrl, slug }) => {
+  const [NFTdetails, setNFTdetails] = useState(null);
+
+  useEffect(() => {
+    const res = getNFTById(slug);
+    setNFTdetails(res);
+  }, [slug]);
+
+  if (NFTdetails)
+    return (
+      <Layout>
+        <div className="pt-24">
+          <h1 className="text-4xl text-center font-bold text-gray-300 pb-8">
+            Watch n°{slug}
+          </h1>
+          <SeparatorData
+            brand={NFTdetails?.brand}
+            watch_model={NFTdetails?.watch_model}
+            owner={"0x4F472991794c32aac39533d673e0669bE70a80cf"}
+          />
+          <div className="px-12 pt-12">
+            <div className="grid grid-cols-3 gap-6">
+              <img
+                src={imageUrl}
+                alt="Dynamic Image"
+                width={400}
+                height={400}
+                className="rounded-2xl col-span-1"
+              />
+              <div className="col-span-2 text-left text-gray-300">
+                <TableDetails txHistoric={txHistoric} />
+              </div>
             </div>
+            <div className="pt-12"></div>
           </div>
-          <div className="pt-12"></div>
         </div>
-      </div>
-    </Layout>
-  );
+      </Layout>
+    );
 };
 
 export default ProductPage;

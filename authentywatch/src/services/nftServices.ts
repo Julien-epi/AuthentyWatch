@@ -11,18 +11,19 @@ import { Inft } from "@/interfaces/Inft";
 }
 
 function update(id: string, data: Inft) {
+
   return axios.put(`${API_URL}/update/${id}`, data);
 }
 
-function deleteNFT(id: string) {
+export function deleteNFT(id: string) {
   return axios.delete(`${API_URL}/delete/${id}`);
 }
 
-function getAllNft() {
+export function getAllNft() {
   return axios.get(API_URL + "/getAllNFT");
 }
 
-function getNFTById(id: string) {
+export function getNFTById(id: string) {
   return axios.get(`${API_URL}/getNFTById/${id}`);
 }
 

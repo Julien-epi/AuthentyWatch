@@ -16,8 +16,6 @@ export function useLastTokenId() {
     useEffect(() => {
 
         if (!isLoading && !isError) {
-            console.log('tokensCounterData', tokensCounterData);
-            
             if (typeof tokensCounterData === 'bigint') {
                 setLastTokenId(parseInt(tokensCounterData.toString()));
             }

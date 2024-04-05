@@ -20,7 +20,7 @@ import { NFTService } from "@/services/nftServices";
 import { useLastTokenId } from "@/hooks/useLastTokenId";
 import { NfcCardService } from "@/services/nfcCardService";
 import abi from '@/utils/abi.json';
-import { useWriteContract } from "wagmi";
+import { useWriteContract, useWaitForTransactionReceipt } from "wagmi";
 import { address } from "@/utils/address";
 
 const FormSchema = z.object({
@@ -49,7 +49,11 @@ const Admin = () => {
   const [loadingMsg, setLoadingMsg] = useState("");
 
   const token_id = useLastTokenId();
-  const { writeContract } = useWriteContract();
+  const {
+    data: hash,
+    isPending,
+    writeContract
+  } = useWriteContract()
 
   const form = useForm({
     resolver: zodResolver(FormSchema),
@@ -86,6 +90,15 @@ const Admin = () => {
     }
   };
 
+  async function mintNft(hash: string) {
+    writeContract({
+      abi,
+      address: address,
+      functionName: 'mint',
+      args: [hash],
+    });
+  }
+
   async function onSubmit(data: any) {
     delete data.image;
     if (file && token_id) {
@@ -114,16 +127,12 @@ const Admin = () => {
             ),
           });
           const jsonFileResponse = await pinJSONToIPFS("metada", JSON.stringify(dataToSubmit));
-          console.log(jsonFileResponse.IpfsHash);
+          console.log("json", jsonFileResponse.IpfsHash);
+          await NFTService.createNft(dataToSubmit);
 
           setLoadingMsg("Minting NFT...");
-          writeContract({
-            abi,
-            address: address,
-            functionName: 'mint',
-            args: [jsonFileResponse.IpfsHash],
-          });
-          await NFTService.createNft(dataToSubmit);
+          mintNft(jsonFileResponse.IpfsHash);
+
           toast({
             title: "NFT created successfully!",
             description: "The NFT has been created successfully.",

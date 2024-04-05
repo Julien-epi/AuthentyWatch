@@ -4,15 +4,19 @@ import Layout from "@/components/Layout/Layout";
 import Image from "next/image";
 import NFC from "@/utils/assets/NFC.png";
 import { NfcCardService } from "@/services/nfcCardService";
+import { useRouter } from "next/router";
 export default function scanNFC() {
 
+  const router = useRouter();
+
   useEffect(() => {
+
     async function fetchData() {
       console.log("Scanning NFC Card");
       const response = await NfcCardService.read();
       const nftId = response.data.tokenId;
       if (nftId) {
-        window.location.href = `/details/${nftId}`;
+        router.push(`/details/${nftId}`);
       }
     }
     fetchData();

@@ -3,10 +3,10 @@ name: CI with Docker for Next.js Frontend
 on:
   push:
     branches:
-      - cicd_test
+      - cicd_dev
   pull_request:
     branches:
-      - cicd_test
+      - cicd_dev
 
 jobs:
   docker-build-and-test:
